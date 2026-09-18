@@ -4,6 +4,7 @@ import com.cleuperumes.CleuPerfumes.Model.Entity.ItemPedido;
 import com.cleuperumes.CleuPerfumes.Model.Entity.Compra;
 import com.cleuperumes.CleuPerfumes.Model.Entity.Produto;
 import com.cleuperumes.CleuPerfumes.Repository.CompraRepository;
+import com.cleuperumes.CleuPerfumes.Repository.PagamentoRepository;
 import com.cleuperumes.CleuPerfumes.Repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class CompraService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
 
     public List<Compra> listarTodos() {
         return CompraRepository.findAll();
@@ -71,11 +75,18 @@ public class CompraService {
 
     @Transactional 
     public void deletarCompra(Long id){
-        if(CompraRepository.findById(id) != null){
-            CompraRepository.deleteById(id);
+        Compra compra = CompraRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Compra não encontrada com o ID: " + id));
+
+        // Opção 1: Se a sua entidade Compra tem a lista de pagamentos mapeada:
+        if (compra.getPagamentos() != null && !compra.getPagamentos().isEmpty()) {
+            pagamentoRepository.deleteAll(compra.getPagamentos());
         }
-        else{
-            throw new RuntimeException("Receita não encontrada");
-        }
+
+        // Opção 2 (Alternativa caso prefira por ID via repository):
+        // pagamentoRepository.deleteByCompraId(id);
+
+        // Por fim, deleta a compra
+        CompraRepository.delete(compra);
     }
 }
