@@ -35,4 +35,10 @@ public class ComprasController {
         Compra CompraAtualizado = comService.atualizarStatusEntrega(id, novoStatus);
         return ResponseEntity.ok(CompraAtualizado);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        comService.deletarCompra(id);
+        return ResponseEntity.noContent().build();
+    }
 }

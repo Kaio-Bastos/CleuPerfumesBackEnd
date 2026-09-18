@@ -69,5 +69,13 @@ public class CompraService {
         return CompraRepository.save(Compra);
     }
 
-    
+    @Transactional 
+    public void deletarCompra(Long id){
+        if(CompraRepository.findById(id) != null){
+            CompraRepository.deleteById(id);
+        }
+        else{
+            throw new RuntimeException("Receita não encontrada");
+        }
+    }
 }
