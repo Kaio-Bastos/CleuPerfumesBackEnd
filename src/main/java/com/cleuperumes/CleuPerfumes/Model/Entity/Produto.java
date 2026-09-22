@@ -26,6 +26,7 @@ public class Produto {
     @Column(name = "valor_liquido", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorLiquido;
 
+    @ElementCollection
     @Column(name = "lotes", nullable = false)
     private List<Lote> lotes;
 

@@ -1,7 +1,9 @@
 package com.cleuperumes.CleuPerfumes.Model.Entity;
 
 import java.time.LocalDate;
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public class Lote {
     private int quantidade;
     private LocalDate validade;
