@@ -2,8 +2,6 @@ package com.cleuperumes.CleuPerfumes.Model.Entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import java.util.List;
 import java.util.Comparator;
 
@@ -27,7 +25,7 @@ public class Produto {
     @Column(name = "valor_liquido", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorLiquido;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = LoteConverter.class)
     @Column(name = "lotes", columnDefinition = "jsonb", nullable = false)
     private List<Lote> lotes;
 
