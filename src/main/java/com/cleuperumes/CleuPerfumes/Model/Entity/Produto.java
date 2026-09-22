@@ -3,6 +3,8 @@ package com.cleuperumes.CleuPerfumes.Model.Entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Comparator;
 
 @Entity
 @Table(name = "produtos")
@@ -21,15 +23,11 @@ public class Produto {
     @Column(name = "foto_url", columnDefinition = "VARCHAR")
     private String fotoUrl;
 
-    private LocalDate validade;
-
-    @Column(name = "valor_bruto", nullable = false, precision = 10, scale = 2)
-    private BigDecimal valorBruto;
-
     @Column(name = "valor_liquido", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorLiquido;
-    private Integer quantidade;
 
+    @Column(name = "lotes", nullable = false)
+    private List<Lote> lotes;
 
     // Construtor Vazio (Exigido pelo JPA)
     public Produto() {}
@@ -47,15 +45,48 @@ public class Produto {
     public String getFotoUrl() { return fotoUrl; }
     public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
-    public LocalDate getValidade() { return validade; }
-    public void setValidade(LocalDate validade) { this.validade = validade; }
-
-    public BigDecimal getValorBruto() { return valorBruto; }
-    public void setValorBruto(BigDecimal valorBruto) { this.valorBruto = valorBruto; }
-
     public BigDecimal getValorLiquido() { return valorLiquido; }
     public void setValorLiquido(BigDecimal valorLiquido) { this.valorLiquido = valorLiquido; }
 
-    public Integer getQuantidade() { return quantidade; }
-    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+    public List<Lote> getLotes() { return lotes;}
+    public void setLotes(List<Lote> lotes) { this.lotes = lotes; }
+
+    public int getQuantidade(){
+        int total = 0;
+        for(Lote lote : lotes){ 
+        total += lote.getQuantidade(); 
+    }    
+        return total;
+    }
+
+    public void darBaixaEstoque(int quantidadeVendida) {
+    if (lotes == null || lotes.isEmpty()) {
+        throw new RuntimeException("Não há lotes disponíveis para baixa.");
+    }
+
+    // 1. Ordena os lotes por data de validade (da mais próxima para a mais distante)
+    lotes.sort(Comparator.comparing(Lote::getValidade));
+
+    // 2. Percorre os lotes descontando a quantidade vendida
+    for (int i = 0; i < lotes.size(); i++) {
+        if (quantidadeVendida <= 0) break; // Se já abateu tudo, encerra
+
+        Lote loteAtual = lotes.get(i);
+
+        if (loteAtual.getQuantidade() <= quantidadeVendida) {
+            // Se o lote tem menos ou igual à quantidade vendida, consumimos ele todo
+            quantidadeVendida -= loteAtual.getQuantidade();
+            lotes.remove(i); // Remove o lote esgotado da lista
+            i--; // Recua o index por causa da remoção
+        } else {
+            // Se o lote tem mais do que o necessário, apenas subtraímos o restante
+            loteAtual.setQuantidade(loteAtual.getQuantidade() - quantidadeVendida);
+            quantidadeVendida = 0;
+        }
+    }
+
+    if (quantidadeVendida > 0) {
+        throw new RuntimeException("Estoque insuficiente para atender a quantidade desejada.");
+    }
+}
 }

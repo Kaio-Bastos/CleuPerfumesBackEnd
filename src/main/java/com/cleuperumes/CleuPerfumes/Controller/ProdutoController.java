@@ -41,10 +41,9 @@ public class ProdutoController {
                     produto.setNome(produtoDetalhes.getNome());
                     produto.setCodigoBarras(produtoDetalhes.getCodigoBarras());
                     produto.setFotoUrl(produtoDetalhes.getFotoUrl());
-                    produto.setValidade(produtoDetalhes.getValidade());
-                    produto.setValorBruto(produtoDetalhes.getValorBruto());
                     produto.setValorLiquido(produtoDetalhes.getValorLiquido());
-                    produto.setQuantidade(produtoDetalhes.getQuantidade());
+
+                    produto.setLotes(produtoDetalhes.getLotes());
                     
                     Produto atualizado = produtoRepository.save(produto);
                     return ResponseEntity.ok(atualizado);

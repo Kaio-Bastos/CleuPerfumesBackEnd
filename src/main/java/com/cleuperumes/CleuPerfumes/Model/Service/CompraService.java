@@ -50,7 +50,7 @@ public class CompraService {
                 throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
             }
 
-            produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
+            produto.darBaixaEstoque(produto.getQuantidade() - item.getQuantidade());
             produtoRepository.save(produto);
 
             ItemPedido novoItem = new ItemPedido(
