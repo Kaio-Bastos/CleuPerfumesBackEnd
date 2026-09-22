@@ -2,7 +2,8 @@ package com.cleuperumes.CleuPerfumes.Model.Entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.util.List;
 import java.util.Comparator;
 
@@ -26,8 +27,8 @@ public class Produto {
     @Column(name = "valor_liquido", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorLiquido;
 
-    @ElementCollection
-    @Column(name = "lotes", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "lotes", columnDefinition = "jsonb", nullable = false)
     private List<Lote> lotes;
 
     // Construtor Vazio (Exigido pelo JPA)
@@ -53,12 +54,13 @@ public class Produto {
     public void setLotes(List<Lote> lotes) { this.lotes = lotes; }
 
     public int getQuantidade(){
-        int total = 0;
-        for(Lote lote : lotes){ 
+    if (lotes == null) return 0;
+    int total = 0;
+    for(Lote lote : lotes){ 
         total += lote.getQuantidade(); 
     }    
-        return total;
-    }
+    return total;
+}
 
     public void darBaixaEstoque(int quantidadeVendida) {
     if (lotes == null || lotes.isEmpty()) {
