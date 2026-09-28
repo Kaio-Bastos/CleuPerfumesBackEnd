@@ -44,7 +44,7 @@ public class Produto {
     public String getCodigoBarras() { return codigoBarras; }
     public void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
 
-    public String getNome() { return nome; }
+    public String getNome() { return nome.toUpperCase(); }
     public void setNome(String nome) { this.nome = nome.toUpperCase(); }
 
     public String getFotoUrl() { return fotoUrl; }
