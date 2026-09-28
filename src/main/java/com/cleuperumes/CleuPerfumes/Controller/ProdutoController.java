@@ -38,7 +38,7 @@ public class ProdutoController {
     public ResponseEntity<Produto> atualizar(@PathVariable Long id, @RequestBody Produto produtoDetalhes) {
         return produtoRepository.findById(id)
                 .map(produto -> {
-                    produto.setNome(produtoDetalhes.getNome());
+                    produto.setNome(produtoDetalhes.getNome().toUpperCase());
                     produto.setCodigoBarras(produtoDetalhes.getCodigoBarras());
                     produto.setFotoUrl(produtoDetalhes.getFotoUrl());
                     produto.setValorLiquido(produtoDetalhes.getValorLiquido());
